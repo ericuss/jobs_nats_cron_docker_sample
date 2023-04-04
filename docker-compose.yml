@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  simplesampleconsole:
+    image: ${DOCKER_REGISTRY-}simplesampleconsole
+    build:
+      context: .
+      dockerfile: src/SimpleSampleConsole/Dockerfile

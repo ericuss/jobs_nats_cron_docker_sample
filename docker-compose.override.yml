@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  nats:
+    image: 'nats:0.8.0'
+    entrypoint: "/gnatsd -DV"
+    expose:
+      - "4222"
+    ports:
+      - "8222:8222"
+    hostname: nats-server
+  
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+    - "27018:27017"
+
+  mongo-seed:
+    image: ${DOCKER_REGISTRY-}mongo-seed
+    build:
+      context: .
+      dockerfile: seedData/Dockerfile
+    depends_on:
+      - mongo
+
+  simplesampleconsole:
+    environment:
+      - NATS_URI=nats://nats:4222
+      - Mongo__DBName=Cart
+      - Mongo__ConnectionString=mongodb://mongo
+    depends_on:
+      - mongo
+      - mongo-seed
+      - nats
